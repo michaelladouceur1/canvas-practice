@@ -17,7 +17,7 @@ window.addEventListener("mousemove", function (event) {
 
 // Parameters
 const radius = 1;
-const jiggle = 2;
+// const jiggle = 2;
 const spacing = 20 * radius;
 const columns = Math.floor(window.innerWidth / spacing);
 const rows = Math.floor(window.innerHeight / spacing);
@@ -30,6 +30,7 @@ function Circle(x, y, radius) {
   this.radius = radius;
   this.oradius = radius;
   this.color = "#fff";
+  this.jiggle = 2;
 
   this.draw = function () {
     ctx.beginPath();
@@ -39,21 +40,24 @@ function Circle(x, y, radius) {
   };
 
   this.update = function () {
-    this.x = this.ox + (Math.random() - 0.5) * jiggle;
-    this.y = this.oy + (Math.random() - 0.5) * jiggle;
+    this.x = this.ox + (Math.random() - 0.5) * this.jiggle;
+    this.y = this.oy + (Math.random() - 0.5) * this.jiggle;
 
     const distance = Math.sqrt(
       Math.pow(this.ox - mouse.x, 2) + Math.pow(this.oy - mouse.y, 2)
     );
-    const maxDistance = spacing * 10;
+    const maxDistance = spacing * 8;
 
     if (distance < maxDistance) {
-      const grad = (maxDistance - distance) / maxDistance;
-      this.radius = 5 * grad * this.oradius + this.oradius;
-      this.color = `rgba(${(distance / maxDistance) * 255},255,255,0.7)`;
+      const radiusGrad = (maxDistance - distance) / maxDistance;
+      const colorGrad = distance / maxDistance;
+      this.radius = (spacing / 3) * radiusGrad * this.oradius + this.oradius;
+      this.color = `rgba(${colorGrad * 255},255,${colorGrad * 255},0.6)`;
+      this.jiggle = 8 * radiusGrad;
     } else {
       this.radius = this.oradius;
       this.color = "#fff";
+      this.jiggle = 2;
     }
     this.draw();
   };
@@ -84,4 +88,4 @@ function animate() {
 }
 
 initialize();
-// animate();
+animate();
